@@ -10,10 +10,10 @@ TESTOBJS = $(TESTOBJ) $(NOMAIN)
 a.out: $(OBJS)
 	$(CXX) $(CFLAGS) $(OBJS) -o $@
 
-$(MAINOBJ): samplemain.cc othello.h game.h colors.h
+$(MAINOBJ): samplemain.cc othello.h game.h space.h colors.h
 	$(CXX) $(CFLAGS) -c samplemain.cc -o $@
 
-othello.o: othello.cc othello.h game.h colors.h
+othello.o: othello.cc othello.h game.h space.h colors.h
 	$(CXX) $(CFLAGS) -c othello.cc -o $@
 
 game.o: game.cc game.h

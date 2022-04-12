@@ -3,7 +3,9 @@
 
 #include <iostream>
 #include "game.h"
+#include "space.h"
 #include "colors.h"
+
 
 class Othello:public main_savitch_14::game {
     public:
@@ -62,7 +64,7 @@ class Othello:public main_savitch_14::game {
          */
 		bool is_legal(const std::string& move) const;
     private:
-        main_savitch_14::game::who board[NUM_ROWS][NUM_COLS];  // the board used to play the game
+        Space board[NUM_ROWS][NUM_COLS];  // the board used to play the game
 };
 
 #endif

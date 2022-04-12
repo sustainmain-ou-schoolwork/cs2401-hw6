@@ -4,7 +4,7 @@ Othello::Othello() {
     // clear the board
     for (size_t row = 0; row < NUM_ROWS; ++row) {
         for (size_t col = 0; col < NUM_COLS; ++col) {
-            board[row][col] = main_savitch_14::game::NEUTRAL;
+            board[row][col] = Space();
         }
     }
 
@@ -14,12 +14,12 @@ Othello::Othello() {
     size_t top = (NUM_ROWS / 2) - 1;   // index of top row in the square
 
     // set the computer's discs in the square
-    board[top][left] = main_savitch_14::game::COMPUTER;
-    board[top + 1][left + 1] = main_savitch_14::game::COMPUTER;
+    board[top][left].setDisc(main_savitch_14::game::COMPUTER);
+    board[top + 1][left + 1].setDisc(main_savitch_14::game::COMPUTER);
 
     // set the human's discs in the square
-    board[top + 1][left] = main_savitch_14::game::HUMAN;
-    board[top][left + 1] = main_savitch_14::game::HUMAN;
+    board[top + 1][left].setDisc(main_savitch_14::game::HUMAN);
+    board[top][left + 1].setDisc(main_savitch_14::game::HUMAN);
 }
 
 void Othello::make_move(const std::string& move) {
@@ -63,7 +63,7 @@ void Othello::display_status() const {
             std::cout << "| ";
 
             // print disc
-            switch (board[row][col]) {
+            switch (board[row][col].getDisc()) {
                 case main_savitch_14::game::HUMAN:
                     std::cout << HUMAN_COLOR << "\u25cf" << FRAME_COLOR << BOARD_COLOR;
                     break;
