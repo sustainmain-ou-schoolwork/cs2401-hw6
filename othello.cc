@@ -14,12 +14,12 @@ Othello::Othello() {
     size_t top = (NUM_ROWS / 2) - 1;   // index of top row in the square
 
     // set the computer's discs in the square
-    board[left][top] = main_savitch_14::game::COMPUTER;
-    board[left + 1][top + 1] = main_savitch_14::game::COMPUTER;
+    board[top][left] = main_savitch_14::game::COMPUTER;
+    board[top + 1][left + 1] = main_savitch_14::game::COMPUTER;
 
     // set the human's discs in the square
-    board[left + 1][top] = main_savitch_14::game::HUMAN;
-    board[left][top + 1] = main_savitch_14::game::HUMAN;
+    board[top + 1][left] = main_savitch_14::game::HUMAN;
+    board[top][left + 1] = main_savitch_14::game::HUMAN;
 }
 
 void Othello::make_move(const std::string& move) {
