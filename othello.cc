@@ -40,12 +40,55 @@ void Othello::compute_moves(std::queue<std::string>& moves) const {
 }
 
 void Othello::display_status() const {
+    const std::string BOARD_COLOR = B_GREEN;
+    const std::string FRAME_COLOR = WHITE;
+    const std::string HUMAN_COLOR = BLACK;
+    const std::string COMPUTER_COLOR = WHITE;
+
+
+    // print each row
     for (size_t row = 0; row < NUM_ROWS; ++row) {
+        // print horizontal bar
+        std::cout << BOARD_COLOR << FRAME_COLOR;
         for (size_t col = 0; col < NUM_COLS; ++col) {
-            std::cout << board[row][col];
+            std::cout << "+---";
         }
-        std::cout << '\n';
+        // print final plus in the bar
+        std::cout << '+' << RESET << '\n';
+
+        // print each square in the row
+        for (size_t col = 0; col < NUM_COLS; ++col) {
+            // print left side of square
+            std::cout << BOARD_COLOR << FRAME_COLOR;
+            std::cout << "| ";
+
+            // print disc
+            switch (board[row][col]) {
+                case main_savitch_14::game::HUMAN:
+                    std::cout << HUMAN_COLOR << "\u25cf" << FRAME_COLOR << BOARD_COLOR;
+                    break;
+                case main_savitch_14::game::COMPUTER:
+                    std::cout << COMPUTER_COLOR << "\u25cf" << FRAME_COLOR << BOARD_COLOR;
+                    break;
+                default:
+                    std::cout << " ";
+                    break;
+            }
+            
+            // print right space
+            std::cout << " ";
+        }
+        // print final barline for the row
+        std::cout << '|' << RESET << '\n';
     }
+
+    // print bottom horizontal bar
+    std::cout << BOARD_COLOR << FRAME_COLOR;
+    for (size_t col = 0; col < NUM_COLS; ++col) {
+        std::cout << "+---";
+    }
+    // print final plus in the bar
+    std::cout << '+' << RESET << '\n';
 }
 
 int Othello::evaluate() const {
