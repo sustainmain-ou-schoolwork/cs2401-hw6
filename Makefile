@@ -11,7 +11,7 @@ a.out: $(OBJS)
 	$(CXX) $(CFLAGS) $(OBJS) -o $@
 
 $(MAINOBJ): samplemain.cc othello.h game.h colors.h
-	$(CXX) $(CFLAGS) -c main.cc -o $@
+	$(CXX) $(CFLAGS) -c samplemain.cc -o $@
 
 othello.o: othello.cc othello.h game.h colors.h
 	$(CXX) $(CFLAGS) -c othello.cc -o $@
