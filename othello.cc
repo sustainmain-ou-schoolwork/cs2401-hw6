@@ -40,27 +40,33 @@ void Othello::compute_moves(std::queue<std::string>& moves) const {
 }
 
 void Othello::display_status() const {
-    const std::string BOARD_COLOR = B_GREEN;
-    const std::string FRAME_COLOR = WHITE;
-    const std::string HUMAN_COLOR = BLACK;
-    const std::string COMPUTER_COLOR = WHITE;
+    // print top border
+    std::cout << BORDER_COLOR << LABEL_COLOR;
+    std::cout << "    ";
+    for (size_t col = 0; col < NUM_COLS; ++col) {
+        std::cout << " " + string({(char)('A' + col)}) + "  ";
+    }
+    std::cout << "   " + RESET + "\n";
 
-
-    // print each row
     for (size_t row = 0; row < NUM_ROWS; ++row) {
-        // print horizontal bar
-        std::cout << BOARD_COLOR << FRAME_COLOR;
-        for (size_t col = 0; col < NUM_COLS; ++col) {
-            std::cout << "+---";
+        // print the bar above the row
+        if (row == 0) {
+            printBar(0);
         }
-        // print final plus in the bar
-        std::cout << '+' << RESET << '\n';
+        else {
+            printBar(1);
+        }
+
+        // print left border
+        std::cout << BORDER_COLOR << LABEL_COLOR;
+        std::cout << " " + to_string(row + 1) + " ";
+        std::cout << RESET;
 
         // print each square in the row
+        std::cout << BOARD_COLOR << FRAME_COLOR;
         for (size_t col = 0; col < NUM_COLS; ++col) {
             // print left side of square
-            std::cout << BOARD_COLOR << FRAME_COLOR;
-            std::cout << "| ";
+            std::cout << VERTICAL << " ";
 
             // print disc
             switch (board[row][col].getDisc()) {
@@ -79,16 +85,60 @@ void Othello::display_status() const {
             std::cout << " ";
         }
         // print final barline for the row
-        std::cout << '|' << RESET << '\n';
+        std::cout << VERTICAL;
+        
+        // print right border
+        std::cout << BORDER_COLOR << LABEL_COLOR << "   " << RESET << '\n';
     }
 
-    // print bottom horizontal bar
-    std::cout << BOARD_COLOR << FRAME_COLOR;
+    // print bottom bar
+    printBar(2);
+
+    // print bottom border
+    std::cout << BORDER_COLOR << LABEL_COLOR;
+    std::cout << "    ";
     for (size_t col = 0; col < NUM_COLS; ++col) {
-        std::cout << "+---";
+        std::cout << "    ";
     }
-    // print final plus in the bar
-    std::cout << '+' << RESET << '\n';
+    std::cout << "   " + RESET + "\n";
+}
+
+void Othello::printBar(int barType) const {
+    // print left border
+    std::cout << BORDER_COLOR << LABEL_COLOR << "   ";
+
+    // setup the colors
+    std::cout << BOARD_COLOR << FRAME_COLOR;
+
+    // print the bar
+    switch (barType) {
+        case 0:
+            // print top bar
+            std::cout << TOP_LEFT << HORIZONTAL << HORIZONTAL << HORIZONTAL;
+            for (size_t col = 1; col < NUM_COLS; ++col) {
+                std::cout << HORIZONTAL_DOWN << HORIZONTAL << HORIZONTAL << HORIZONTAL;
+            }
+            std::cout << TOP_RIGHT;
+            break;
+        case 1:
+            // print middle bar
+            std::cout << VERTICAL_LEFT << HORIZONTAL << HORIZONTAL << HORIZONTAL;
+            for (size_t col = 1; col < NUM_COLS; ++col) {
+                std::cout << HORIZONTAL_AND_VERTICAL << HORIZONTAL << HORIZONTAL << HORIZONTAL;
+            }
+            std::cout << VERTICAL_RIGHT;
+            break;
+        default:
+            // print bottom bar
+            std::cout << BOTTOM_LEFT << HORIZONTAL << HORIZONTAL << HORIZONTAL;
+            for (size_t col = 1; col < NUM_COLS; ++col) {
+                std::cout << HORIZONTAL_UP << HORIZONTAL << HORIZONTAL << HORIZONTAL;
+            }
+            std::cout << BOTTOM_RIGHT;
+    }
+
+    // print right border
+    std::cout << BORDER_COLOR << LABEL_COLOR << "   " << RESET << '\n';
 }
 
 int Othello::evaluate() const {

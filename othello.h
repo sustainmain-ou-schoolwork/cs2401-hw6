@@ -65,6 +65,32 @@ class Othello:public main_savitch_14::game {
 		bool is_legal(const std::string& move) const;
     private:
         Space board[NUM_ROWS][NUM_COLS];  // the board used to play the game
+
+        const std::string BOARD_COLOR = B_GREEN;   // background color of the board
+        const std::string BORDER_COLOR = B_WHITE;  // background color of the frame around the board
+        const std::string FRAME_COLOR = WHITE;     // color of the board's frame
+        const std::string LABEL_COLOR = BLACK;     // color of the board's labels
+        const std::string HUMAN_COLOR = BLACK;     // color of the human's discs
+        const std::string COMPUTER_COLOR = WHITE;  // color of the computer's discs
+
+        const std::string HORIZONTAL = "\u2500";               // char for horizontal line
+        const std::string VERTICAL = "\u2502";                 // char for vertical line
+        const std::string TOP_LEFT = "\u250c";                 // char for top left corner
+        const std::string TOP_RIGHT = "\u2510";                // char for top right corner
+        const std::string BOTTOM_LEFT = "\u2514";              // char for bottom left corner
+        const std::string BOTTOM_RIGHT = "\u2518";             // char for bottom right corner
+        const std::string VERTICAL_LEFT = "\u251c";            // char for vertical line with horizontal line on right half
+        const std::string VERTICAL_RIGHT = "\u2524";           // char for vertical line with horizontal line on left half
+        const std::string HORIZONTAL_DOWN = "\u252c";          // char for horizontal line with vertical line on bottom half
+        const std::string HORIZONTAL_UP = "\u2534";            // char for horizontal line with vertical line on top half
+        const std::string HORIZONTAL_AND_VERTICAL = "\u253c";  // char for horizontal line with vertical line
+
+        /**
+         * @brief Print a bar in the frame of the board.
+         * 
+         * @param barType the type of bar to print (0 prints the top bar, 1 prints a middle bar, anything else prints a bottom bar)
+         */
+        void printBar(int barType) const;
 };
 
 #endif
