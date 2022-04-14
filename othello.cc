@@ -23,11 +23,26 @@ Othello::Othello() {
 }
 
 void Othello::make_move(const std::string& move) {
+    int col = move[0] - 'A';
+    int row = stoi(move.substr(1, (move.length() - 1))) - 1;
 
+    // set the disc indicated by the move
+    board[row][col].setDisc(game::next_mover());
+
+    // flip the other disc
+    if (col > 3) {
+        board[4][4].setDisc(game::next_mover());
+    }
+    else {
+        board[3][3].setDisc(game::next_mover());
+    }
+
+    game::make_move(move);  // increment move_number
 }
 
 void Othello::restart() {
-
+    Othello();        // clear board
+    game::restart();  // set move_number to 0
 }
 
 main_savitch_14::game* Othello::clone() const {
@@ -153,5 +168,10 @@ bool Othello::is_game_over() const {
 
 bool Othello::is_legal(const std::string& move) const {
     // TODO
-    return false;
+    if (move == "D3" || move == "C4" || move == "F5" || move == "E6") {
+        return true;
+    }
+    else{
+        return false;
+    }
 }
