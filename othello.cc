@@ -23,8 +23,9 @@ Othello::Othello() {
 }
 
 void Othello::make_move(const std::string& move) {
-    int col = move[0] - 'A';
-    int row = stoi(move.substr(1, (move.length() - 1))) - 1;
+    // TODO
+    int row = toRow(move);
+    int col = toCol(move);
 
     // set the disc indicated by the move
     board[row][col].setDisc(game::next_mover());
@@ -51,7 +52,7 @@ main_savitch_14::game* Othello::clone() const {
 }
 
 void Othello::compute_moves(std::queue<std::string>& moves) const {
-
+    // TODO
 }
 
 void Othello::display_status() const {
@@ -167,11 +168,102 @@ bool Othello::is_game_over() const {
 }
 
 bool Othello::is_legal(const std::string& move) const {
-    // TODO
-    if (move == "D3" || move == "C4" || move == "F5" || move == "E6") {
-        return true;
+    int row = toRow(move);
+    int col = toCol(move);
+
+    // check if each line is flippable
+    for (int rowChange = -1; rowChange <= 1; rowChange++) {
+        for (int colChange = -1; colChange <= 1; colChange++) {
+            // if the current line is flippable, return true
+            if (checkLine(row, col, rowChange, colChange)) {
+                return true;
+            }
+        }
     }
-    else{
+
+    // if none of the lines were flippable, return false
+    return false;
+}
+
+int Othello::toCol(const std::string& move) const {
+    int col = -1;
+
+    if (move.length() > 0) {
+        col = toupper(move[0]) - 'A';
+    }
+
+    return col;
+}
+
+int Othello::toRow(const std::string& move) const {
+    int row = -1;
+
+    if (move.length() > 1) {
+        try {
+            row = stoi(move.substr(1, (move.length() - 1))) - 1;
+        }
+        catch (const std::invalid_argument& ia) {
+        }
+    }
+
+    return row;
+}
+
+bool Othello::checkLine(size_t row, size_t col, int rowChange, int colChange) const {
+    // set default bounds
+    size_t rowMin = 0;
+    size_t rowMax = static_cast<int>(NUM_ROWS) - 1;
+    size_t colMin = 0;
+    size_t colMax = static_cast<int>(NUM_COLS) - 1;
+
+    switch (rowChange) {
+        case -1:
+            rowMin = 2;
+            break;
+        case 1:
+            rowMax = rowMax - 2;
+            break;
+    }
+
+    switch (colChange) {
+        case -1:
+            colMin = 2;
+            break;
+        case 1:
+            colMax = colMax - 2;
+            break;
+    }
+
+    // make sure the move is in the board
+    if (row < rowMin || row > rowMax || col < colMin || col > colMax) {
         return false;
     }
+
+    // make sure the row or column will change as the function checks along the line
+    if (rowChange == 0 && colChange == 0) {
+        return false;
+    }
+
+    // if the next disc is the opposite player
+    if (board[row + rowChange][col + colChange].getDisc() == last_mover()) {
+        // check the rest of discs along the line
+        size_t r = row + (rowChange * 2);
+        size_t c = col + (colChange * 2);
+        while (r > rowMin && r < rowMax && c > colMin && c < colMax) {
+            if (board[r][c].getDisc() == next_mover()) {
+                // if the line is capped by the current player, it can be flipped
+                return true;
+            }
+            else if (board[r][c].getDisc() == game::NEUTRAL) {
+                // if the line is capped by an empty square, it cannot be flipped
+                return false;
+            }
+
+            c += colChange;
+            r += rowChange;
+        }
+    }
+
+    // if a valid line wasn't found, return false
+    return false;
 }

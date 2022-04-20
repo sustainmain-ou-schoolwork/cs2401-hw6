@@ -14,8 +14,8 @@ class Othello:public main_savitch_14::game {
          */
         Othello();
 
-        static const size_t NUM_COLS = 8;  // the number of columns on the board
         static const size_t NUM_ROWS = 8;  // the number of rows on the board
+        static const size_t NUM_COLS = 8;  // the number of columns on the board
 
         /**
          * @brief Make a move for the current player.
@@ -63,6 +63,7 @@ class Othello:public main_savitch_14::game {
          * @return true if the given move is legal for the next player
          */
 		bool is_legal(const std::string& move) const;
+
     private:
         Space board[NUM_ROWS][NUM_COLS];  // the board used to play the game
 
@@ -91,6 +92,33 @@ class Othello:public main_savitch_14::game {
          * @param barType the type of bar to print (0 prints the top bar, 1 prints a middle bar, anything else prints a bottom bar)
          */
         void printBar(int barType) const;
+
+        /**
+         * @brief Determine what the row index should be based on the move string provided (defaults to -1).
+         * 
+         * @param move the move string
+         * @return the index of the row indicated by the move string
+         */
+        int toRow(const std::string& move) const;
+
+        /**
+         * @brief Determine what the column index should be based on the move string provided (defaults to -1).
+         * 
+         * @param move the move string
+         * @return the index of the column indicated by the move string
+         */
+        int toCol(const std::string& move) const;
+
+        /**
+         * @brief Check if a given line coming from a given square would be flippable if the current mover put a disc there.
+         * 
+         * @param row the row of the disc
+         * @param col the column of the disc
+         * @param rowChange the direction that the rows change going along the line
+         * @param colChange the direction that the columns change going along the line
+         * @return true if the line is flippable
+         */
+        bool checkLine(size_t row, size_t col, int rowChange, int colChange) const;
 };
 
 #endif
