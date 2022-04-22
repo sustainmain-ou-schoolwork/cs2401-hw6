@@ -30,13 +30,17 @@ void Othello::make_move(const std::string& move) {
     // set the disc indicated by the move
     board[row][col].setDisc(game::next_mover());
 
-    // flip the other disc
-    if (col > 3) {
-        board[4][4].setDisc(game::next_mover());
+    // flip all the possible lines
+    for (int rowChange = -1; rowChange <= 1; rowChange++) {
+        for (int colChange = -1; colChange <= 1; colChange++) {
+            // if the current line is flippable, return true
+            size_t discCount = checkLine(row, col, rowChange, colChange);
+            if (discCount > 0) {
+                flipLine(row, col, rowChange, colChange, discCount);
+            }
+        }
     }
-    else {
-        board[3][3].setDisc(game::next_mover());
-    }
+    
 
     game::make_move(move);  // increment move_number
 }
@@ -175,7 +179,7 @@ bool Othello::is_legal(const std::string& move) const {
     for (int rowChange = -1; rowChange <= 1; rowChange++) {
         for (int colChange = -1; colChange <= 1; colChange++) {
             // if the current line is flippable, return true
-            if (checkLine(row, col, rowChange, colChange)) {
+            if (checkLine(row, col, rowChange, colChange) > 0) {
                 return true;
             }
         }
@@ -209,12 +213,15 @@ int Othello::toRow(const std::string& move) const {
     return row;
 }
 
-bool Othello::checkLine(size_t row, size_t col, int rowChange, int colChange) const {
+size_t Othello::checkLine(size_t row, size_t col, int rowChange, int colChange) const {
+    // start with 0 discs flippable; add them later
+    size_t count = 0;
+    
     // set default bounds
     size_t rowMin = 0;
-    size_t rowMax = static_cast<int>(NUM_ROWS) - 1;
+    size_t rowMax = NUM_ROWS - 1;
     size_t colMin = 0;
-    size_t colMax = static_cast<int>(NUM_COLS) - 1;
+    size_t colMax = NUM_COLS - 1;
 
     switch (rowChange) {
         case -1:
@@ -236,27 +243,32 @@ bool Othello::checkLine(size_t row, size_t col, int rowChange, int colChange) co
 
     // make sure the move is in the board
     if (row < rowMin || row > rowMax || col < colMin || col > colMax) {
-        return false;
+        return 0;
     }
 
     // make sure the row or column will change as the function checks along the line
     if (rowChange == 0 && colChange == 0) {
-        return false;
+        return 0;
     }
 
     // if the next disc is the opposite player
     if (board[row + rowChange][col + colChange].getDisc() == last_mover()) {
+        count = 1;  // the first disc can be flipped
         // check the rest of discs along the line
         size_t r = row + (rowChange * 2);
         size_t c = col + (colChange * 2);
         while (r > rowMin && r < rowMax && c > colMin && c < colMax) {
-            if (board[r][c].getDisc() == next_mover()) {
+            if (board[r][c].getDisc() == last_mover()) {
+                // if the current disc is the same player, increase the count and continue along the line
+                count++;
+            }
+            else if (board[r][c].getDisc() == next_mover()) {
                 // if the line is capped by the current player, it can be flipped
-                return true;
+                return count;
             }
             else if (board[r][c].getDisc() == game::NEUTRAL) {
                 // if the line is capped by an empty square, it cannot be flipped
-                return false;
+                return 0;
             }
 
             c += colChange;
@@ -264,6 +276,18 @@ bool Othello::checkLine(size_t row, size_t col, int rowChange, int colChange) co
         }
     }
 
-    // if a valid line wasn't found, return false
-    return false;
+    // if a valid line wasn't found, return 0
+    return 0;
+}
+
+void Othello::flipLine(size_t row, size_t col, int rowChange, int colChange, size_t count) {
+    size_t r = row;
+    size_t c = col;
+
+    for (size_t i = 0; i < (count + 1); ++i) {
+        board[r][c] = next_mover();
+
+        c += colChange;
+        r += rowChange;
+    }
 }

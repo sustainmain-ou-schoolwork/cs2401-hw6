@@ -110,15 +110,26 @@ class Othello:public main_savitch_14::game {
         int toCol(const std::string& move) const;
 
         /**
-         * @brief Check if a given line coming from a given square would be flippable if the current mover put a disc there.
+         * @brief Return the number of discs that can be flipped in a line.
          * 
          * @param row the row of the disc
          * @param col the column of the disc
          * @param rowChange the direction that the rows change going along the line
          * @param colChange the direction that the columns change going along the line
-         * @return true if the line is flippable
+         * @return the number of discs that can be flipped in that line
          */
-        bool checkLine(size_t row, size_t col, int rowChange, int colChange) const;
+        size_t checkLine(size_t row, size_t col, int rowChange, int colChange) const;
+
+        /**
+         * @brief Flip a line of discs to the current player.
+         * 
+         * @param row the row of the starting disc
+         * @param col the column of the starting disc
+         * @param rowChange the direction that the rows change going along the line
+         * @param colChange the direction that the columns change going along the line
+         * @param count the number of discs that can be flipped in that line
+         */
+        void flipLine(size_t row, size_t col, int rowChange, int colChange, size_t count);
 };
 
 #endif
