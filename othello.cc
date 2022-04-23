@@ -97,7 +97,21 @@ void Othello::display_status() const {
                     std::cout << COMPUTER_COLOR << "\u25cf" << FRAME_COLOR << BOARD_COLOR;
                     break;
                 default:
-                    std::cout << " ";
+                    // display a dotted circle if the current square is a potential move
+                    if (checkLines(row, col)) {
+                        // select the right color for the dotted circle
+                        if (next_mover() == main_savitch_14::game::HUMAN) {
+                            std::cout << HUMAN_COLOR;
+                        }
+                        else {
+                            std::cout << COMPUTER_COLOR;
+                        }
+                        std::cout << "\u25cc" << FRAME_COLOR << BOARD_COLOR;
+                    }
+                    else {
+                        // display a space if the current square is not a potential move
+                        std::cout << " ";
+                    }
                     break;
             }
             
@@ -175,18 +189,8 @@ bool Othello::is_legal(const std::string& move) const {
     int row = toRow(move);
     int col = toCol(move);
 
-    // check if each line is flippable
-    for (int rowChange = -1; rowChange <= 1; rowChange++) {
-        for (int colChange = -1; colChange <= 1; colChange++) {
-            // if the current line is flippable, return true
-            if (checkLine(row, col, rowChange, colChange) > 0) {
-                return true;
-            }
-        }
-    }
-
-    // if none of the lines were flippable, return false
-    return false;
+    // check if any lines are flippable from the disc position
+    return checkLines(row, col);
 }
 
 int Othello::toCol(const std::string& move) const {
@@ -278,6 +282,20 @@ size_t Othello::checkLine(size_t row, size_t col, int rowChange, int colChange) 
 
     // if a valid line wasn't found, return 0
     return 0;
+}
+
+bool Othello::checkLines(size_t row, size_t col) const {
+    for (int rowChange = -1; rowChange <= 1; rowChange++) {
+        for (int colChange = -1; colChange <= 1; colChange++) {
+            // if the current line is flippable, return true
+            if (checkLine(row, col, rowChange, colChange) > 0) {
+                return true;
+            }
+        }
+    }
+
+    // if no lines were flippable, return false
+    return false;
 }
 
 void Othello::flipLine(size_t row, size_t col, int rowChange, int colChange, size_t count) {

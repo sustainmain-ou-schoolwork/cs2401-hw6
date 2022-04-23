@@ -121,6 +121,15 @@ class Othello:public main_savitch_14::game {
         size_t checkLine(size_t row, size_t col, int rowChange, int colChange) const;
 
         /**
+         * @brief Check if any of the lines coming from a given square are flippable.
+         * 
+         * @param row the row of the disc
+         * @param col the column of the disc
+         * @return true if any of the lines can be flipped
+         */
+        bool checkLines(size_t row, size_t col) const;
+
+        /**
          * @brief Flip a line of discs to the current player.
          * 
          * @param row the row of the starting disc
