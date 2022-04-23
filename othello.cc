@@ -225,19 +225,19 @@ size_t Othello::checkLine(size_t row, size_t col, int rowChange, int colChange) 
 
     switch (rowChange) {
         case -1:
-            rowMin = 2;
+            rowMin += 2;
             break;
         case 1:
-            rowMax = rowMax - 2;
+            rowMax -= 2;
             break;
     }
 
     switch (colChange) {
         case -1:
-            colMin = 2;
+            colMin += 2;
             break;
         case 1:
-            colMax = colMax - 2;
+            colMax -= 2;
             break;
     }
 
@@ -257,7 +257,7 @@ size_t Othello::checkLine(size_t row, size_t col, int rowChange, int colChange) 
         // check the rest of discs along the line
         size_t r = row + (rowChange * 2);
         size_t c = col + (colChange * 2);
-        while (r > rowMin && r < rowMax && c > colMin && c < colMax) {
+        while (r >= rowMin && r <= rowMax && c >= colMin && c <= colMax) {
             if (board[r][c].getDisc() == last_mover()) {
                 // if the current disc is the same player, increase the count and continue along the line
                 count++;

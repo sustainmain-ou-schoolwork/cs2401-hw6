@@ -24,14 +24,14 @@ namespace main_savitch_14
     {
 		restart( );
 		// Note that as you develop the game you will be gradually un-commenting this function.	
-		//while(!is_game_over( ))
-		//{
+		while(!is_game_over( ))
+		{
 			display_status( );
 			//if (last_mover( ) == COMPUTER)
 				make_human_move( );
 			//else
 				//make_computer_move( );
-		//}
+		}
 		display_status( );
 		return HUMAN;
     }
