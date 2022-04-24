@@ -33,7 +33,8 @@ namespace main_savitch_14
 				//make_computer_move( );
 		}
 		display_status( );
-		return HUMAN;
+
+		return winning();
     }
 
 
@@ -60,9 +61,9 @@ namespace main_savitch_14
 		int value = evaluate( ); // Evaluate based on move that was just made.
 
 		if (value > 0)
-			return last_mover( );
+			return COMPUTER;
 		else if (value < 0)
-			return next_mover( );
+			return HUMAN;
 		else
 			return NEUTRAL;
     }
