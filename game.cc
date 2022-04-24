@@ -22,25 +22,26 @@ namespace main_savitch_14
     // game, with the human player moving first and the computer second.
     // The return value is the winner of the game (or NEUTRAL for a tie).
     {
-		restart( );
-		// Note that as you develop the game you will be gradually un-commenting 
-		// this function.	
-		while (!is_game_over( ))
-		{
-			display_status( );
-			//if (last_mover( ) == COMPUTER)
-				make_human_move( );
-			//else
-				//make_computer_move( );
-		}
-		display_status( );
-		return winning();	// although the winning function is listed as 
-							// an optional override, you should write your 
-							// own. It simply counts pieces.
+	restart( );
+	// Note that as you develop the game you will be gradually un-commenting 
+	// this function.	
+	while (!is_game_over( )) // un-comment this
+	{
+	    display_status( );
+	    if (last_mover( ) == COMPUTER)
+			make_human_move( );
+	    else
+			make_computer_move( );
+	}
+
+	display_status( );
+	return winning();	// although the winning function is listed as 
+						// an optional override, you should write your 
+		        		// own. It simply counts pieces.
     }
 
 
-    
+
     //*************************************************************************
     // OPTIONAL VIRTUAL FUNCTIONS (overriding these functions is optional)
 
@@ -89,13 +90,13 @@ namespace main_savitch_14
     	game* future;          // Pointer to a future version of this game
 	
         // Base case:
-		if (look_ahead == 0 || is_game_over( ))
-		{
-			if (last_mover( ) == COMPUTER)
-					return evaluate( );
-			else
+	if (look_ahead == 0 || is_game_over( ))
+	{
+	    if (last_mover( ) == COMPUTER)
+	            return evaluate( );
+	    else
 			return -evaluate( );
-		}
+	}
 
         // Recursive case:
         // The level is above 0, so try all possible opponent moves. Keep the
@@ -130,7 +131,7 @@ namespace main_savitch_14
 		game* future;
 		
 		// Compute all legal moves that the computer could make.
-		compute_moves(moves);
+		compute_moves(moves); //*****
 		//assert(!moves.empty( ));
 		
 		// Evaluate each possible legal move, saving the index of the best
@@ -138,9 +139,9 @@ namespace main_savitch_14
 		best_value = INT_MIN;
 		while (!moves.empty( ))
 		{
-			future = clone( );
+			future = clone( ); //***** return new Othello(*this)
 			future -> make_move(moves.front( ));
-			value = future -> eval_with_lookahead(SEARCH_LEVELS, best_value);
+			value = future -> eval_with_lookahead(SEARCH_LEVELS, best_value); //***** uses evaluate() which you probably already wrote
 			delete future;
 			if (value >= best_value)
 			{
@@ -164,6 +165,7 @@ namespace main_savitch_14
 			display_message("Illegal move.\n");
 			move = get_user_move( );
 		}
+
 		make_move(move);
 	}
 }
