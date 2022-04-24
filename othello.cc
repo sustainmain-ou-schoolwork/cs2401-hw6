@@ -17,7 +17,6 @@ Othello::Othello() {
         }
     }
 
-
     // get the left and top index of the middle square
     size_t left = (NUM_COLS / 2) - 1;  // index of left column in the square
     size_t top = (NUM_ROWS / 2) - 1;   // index of top row in the square
@@ -52,7 +51,8 @@ void Othello::make_move(const std::string& move) {
         board[row][col].setDisc(game::next_mover());
     }
 
-    game::make_move(move);  // increment move_number
+    // increment move_number
+    game::make_move(move);  
 }
 
 void Othello::restart() {
