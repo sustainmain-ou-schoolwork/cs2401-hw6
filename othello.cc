@@ -1,5 +1,14 @@
 #include "othello.h"
 
+std::string stringToUpper(std::string input) {
+    string output = "";
+    for (size_t i = 0; i < input.length(); i++) {
+        output += toupper(input.at(i));
+    }
+
+    return output;
+}
+
 Othello::Othello() {
     // clear the board
     for (size_t row = 0; row < NUM_ROWS; ++row) {
@@ -23,24 +32,25 @@ Othello::Othello() {
 }
 
 void Othello::make_move(const std::string& move) {
-    // TODO
-    int row = toRow(move);
-    int col = toCol(move);
+    // place discs only if the move isn't a skip
+    if (stringToUpper(move) != "SKIP") {
+        int row = toRow(move);
+        int col = toCol(move);
 
-    // set the disc indicated by the move
-    board[row][col].setDisc(game::next_mover());
-
-    // flip all the possible lines
-    for (int rowChange = -1; rowChange <= 1; rowChange++) {
-        for (int colChange = -1; colChange <= 1; colChange++) {
-            // if the current line is flippable, return true
-            size_t discCount = checkLine(row, col, rowChange, colChange);
-            if (discCount > 0) {
-                flipLine(row, col, rowChange, colChange, discCount);
+        // flip all the possible lines
+        for (int rowChange = -1; rowChange <= 1; rowChange++) {
+            for (int colChange = -1; colChange <= 1; colChange++) {
+                // if the current line is flippable, return true
+                size_t discCount = checkLine(row, col, rowChange, colChange);
+                if (discCount > 0) {
+                    flipLine(row, col, rowChange, colChange, discCount);
+                }
             }
         }
+
+        // set the disc indicated by the move
+        board[row][col].setDisc(game::next_mover());
     }
-    
 
     game::make_move(move);  // increment move_number
 }
@@ -50,9 +60,8 @@ void Othello::restart() {
     game::restart();  // set move_number to 0
 }
 
-main_savitch_14::game* Othello::clone() const {
-    // TODO
-    return new Othello();
+Othello* Othello::clone() const {
+    return new Othello(*this);
 }
 
 void Othello::compute_moves(std::queue<std::string>& moves) const {
@@ -60,6 +69,10 @@ void Othello::compute_moves(std::queue<std::string>& moves) const {
 }
 
 void Othello::display_status() const {
+    // print score
+    std::cout << "WHITE: " << countDiscs(main_savitch_14::game::COMPUTER) << '\n';
+    std::cout << "BLACK: " << countDiscs(main_savitch_14::game::HUMAN) << '\n';
+
     // print top border
     std::cout << BORDER_COLOR << LABEL_COLOR;
     std::cout << "    ";
@@ -176,21 +189,56 @@ void Othello::printBar(int barType) const {
 }
 
 int Othello::evaluate() const {
-    // TODO
-    return 0;
+    return static_cast<int>(countDiscs(next_mover()) - countDiscs(last_mover()));
 }
 
 bool Othello::is_game_over() const {
-    // TODO
-    return false;
+    for (size_t row = 0; row < NUM_ROWS; ++row) {
+        for (size_t col = 0; col < NUM_COLS; ++col) {
+            if (checkLines(row, col)) {
+                // return false if any valid moves are found for the current player
+                return false;
+            }
+        }
+    }
+
+    Othello* tmp = clone();
+    tmp -> make_move("SKIP");
+    for (size_t row = 0; row < NUM_ROWS; ++row) {
+        for (size_t col = 0; col < NUM_COLS; ++col) {
+            if (tmp->checkLines(row, col)) {
+                // return false if any valid moves are found for the other player
+                return false;
+            }
+        }
+    }
+
+    // if no valid moves were found for either player, return true
+    return true;
 }
 
 bool Othello::is_legal(const std::string& move) const {
-    int row = toRow(move);
-    int col = toCol(move);
+    if (stringToUpper(move) == "SKIP") {
+        // check if any moves are possible
+        for (size_t row = 0; row < NUM_ROWS; ++row) {
+            for (size_t col = 0; col < NUM_COLS; ++col) {
+                // if a move is possible, return false
+                if (checkLines(row, col)) {
+                    return false;
+                }
+            }
+        }
 
-    // check if any lines are flippable from the disc position
-    return checkLines(row, col);
+        //if no other valid moves were found, return true
+        return true;
+    }
+    else {
+        int row = toRow(move);
+        int col = toCol(move);
+
+        // check if any lines are flippable from the disc position
+        return checkLines(row, col);
+    }
 }
 
 int Othello::toCol(const std::string& move) const {
@@ -222,10 +270,14 @@ size_t Othello::checkLine(size_t row, size_t col, int rowChange, int colChange) 
     size_t count = 0;
     
     // set default bounds
-    size_t rowMin = 0;
-    size_t rowMax = NUM_ROWS - 1;
-    size_t colMin = 0;
-    size_t colMax = NUM_COLS - 1;
+    size_t originalRowMin = 0;
+    size_t originalRowMax = NUM_ROWS - 1;
+    size_t originalColMin = 0;
+    size_t originalColMax = NUM_COLS - 1;
+    size_t rowMin = originalRowMin;
+    size_t rowMax = originalRowMax;
+    size_t colMin = originalColMin;
+    size_t colMax = originalColMax;
 
     switch (rowChange) {
         case -1:
@@ -245,12 +297,17 @@ size_t Othello::checkLine(size_t row, size_t col, int rowChange, int colChange) 
             break;
     }
 
-    // make sure the move is in the board
+    // if the move is outside of the board, return 0
     if (row < rowMin || row > rowMax || col < colMin || col > colMax) {
         return 0;
     }
 
-    // make sure the row or column will change as the function checks along the line
+    // if the square is already occupied, return 0
+    if (board[row][col].getDisc() != main_savitch_14::game::NEUTRAL) {
+        return 0;
+    }
+
+    // if neither the row nor the column will change as the function runs along the line 
     if (rowChange == 0 && colChange == 0) {
         return 0;
     }
@@ -259,9 +316,9 @@ size_t Othello::checkLine(size_t row, size_t col, int rowChange, int colChange) 
     if (board[row + rowChange][col + colChange].getDisc() == last_mover()) {
         count = 1;  // the first disc can be flipped
         // check the rest of discs along the line
-        size_t r = row + (rowChange * 2);
-        size_t c = col + (colChange * 2);
-        while (r >= rowMin && r <= rowMax && c >= colMin && c <= colMax) {
+        int r = row + (rowChange * 2);
+        int c = col + (colChange * 2);
+        while (r >= static_cast<int>(originalRowMin) && r <= static_cast<int>(originalRowMax) && c >= static_cast<int>(originalColMin) && c <= static_cast<int>(originalColMax)) {
             if (board[r][c].getDisc() == last_mover()) {
                 // if the current disc is the same player, increase the count and continue along the line
                 count++;
@@ -299,13 +356,27 @@ bool Othello::checkLines(size_t row, size_t col) const {
 }
 
 void Othello::flipLine(size_t row, size_t col, int rowChange, int colChange, size_t count) {
-    size_t r = row;
-    size_t c = col;
+    size_t r = row + rowChange;
+    size_t c = col + colChange;
 
-    for (size_t i = 0; i < (count + 1); ++i) {
+    for (size_t i = 0; i < count; ++i) {
         board[r][c] = next_mover();
 
         c += colChange;
         r += rowChange;
     }
+}
+
+size_t Othello::countDiscs(main_savitch_14::game::who player) const {
+    size_t count = 0;
+
+    for (size_t row = 0; row < NUM_ROWS; ++row) {
+        for (size_t col = 0; col < NUM_COLS; ++col) {
+            if(board[row][col].getDisc() == player) {
+                count++;
+            }
+        }
+    }
+
+    return count;
 }

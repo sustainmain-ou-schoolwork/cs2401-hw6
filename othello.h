@@ -7,6 +7,15 @@
 #include "colors.h"
 
 
+/**
+ *  @brief Converts an entire string to uppercase.
+ * 
+ *  @param input the string to be converted
+ *  @return the string in uppercase
+ */
+std::string stringToUpper(std::string input);
+
+
 class Othello:public main_savitch_14::game {
     public:
         /**
@@ -32,7 +41,7 @@ class Othello:public main_savitch_14::game {
 		/**
 		 * @return a pointer to a clone of the Othello object
 		 */
-		main_savitch_14::game* clone() const;
+		Othello* clone() const;
 
         /**
          * @brief Compute all the moves that the next player can make.
@@ -139,6 +148,14 @@ class Othello:public main_savitch_14::game {
          * @param count the number of discs that can be flipped in that line
          */
         void flipLine(size_t row, size_t col, int rowChange, int colChange, size_t count);
+
+        /**
+         * @brief Get the number of discs on the board owned by a given player.
+         * 
+         * @param player the player whose discs will be counted
+         * @return the number of discs owned by the player
+         */
+        size_t countDiscs(main_savitch_14::game::who player) const;
 };
 
 #endif
