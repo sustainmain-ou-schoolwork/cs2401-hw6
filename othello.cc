@@ -83,7 +83,10 @@ void Othello::compute_moves(std::queue<std::string>& moves) const {
     for (size_t row = 0; row < NUM_ROWS; ++row) {
         for (size_t col = 0; col < NUM_COLS; ++col) {
             if (checkLines(row, col)) {
-                moves.push(to_string('A' + col) + to_string(row + 1));
+                std::string newMove = "";
+                newMove += static_cast<char>('A' + col);
+                newMove += to_string(row + 1);
+                moves.push(newMove);
             }
         }
     }
