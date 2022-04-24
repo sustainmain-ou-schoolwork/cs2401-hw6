@@ -156,6 +156,11 @@ class Othello:public main_savitch_14::game {
          * @return the number of discs owned by the player
          */
         size_t countDiscs(main_savitch_14::game::who player) const;
+
+        /**
+         * @return true if any valid moves are found for the next player
+         */
+        bool nextPlayerCanMove() const;
 };
 
 #endif

@@ -2,7 +2,7 @@
 
 std::string stringToUpper(std::string input) {
     string output = "";
-    for (size_t i = 0; i < input.length(); i++) {
+    for (size_t i = 0; i < input.length(); ++i) {
         output += toupper(input.at(i));
     }
 
@@ -38,8 +38,8 @@ void Othello::make_move(const std::string& move) {
         int col = toCol(move);
 
         // flip all the possible lines
-        for (int rowChange = -1; rowChange <= 1; rowChange++) {
-            for (int colChange = -1; colChange <= 1; colChange++) {
+        for (int rowChange = -1; rowChange <= 1; ++rowChange) {
+            for (int colChange = -1; colChange <= 1; ++colChange) {
                 // if the current line is flippable, return true
                 size_t discCount = checkLine(row, col, rowChange, colChange);
                 if (discCount > 0) {
@@ -65,7 +65,19 @@ Othello* Othello::clone() const {
 }
 
 void Othello::compute_moves(std::queue<std::string>& moves) const {
-    // TODO
+    // add all the possible moves
+    for (size_t row = 0; row < NUM_ROWS; ++row) {
+        for (size_t col = 0; col < NUM_COLS; ++col) {
+            if (checkLines(row, col)) {
+                moves.push(to_string('A' + col) + to_string(row + 1));
+            }
+        }
+    }
+
+    // add skip if no moves are possible
+    if (moves.empty()) {
+        moves.push("SKIP");
+    }
 }
 
 void Othello::display_status() const {
@@ -189,28 +201,20 @@ void Othello::printBar(int barType) const {
 }
 
 int Othello::evaluate() const {
-    return static_cast<int>(countDiscs(next_mover()) - countDiscs(last_mover()));
+    return static_cast<int>(countDiscs(main_savitch_14::game::COMPUTER) - countDiscs(main_savitch_14::game::HUMAN));
 }
 
 bool Othello::is_game_over() const {
-    for (size_t row = 0; row < NUM_ROWS; ++row) {
-        for (size_t col = 0; col < NUM_COLS; ++col) {
-            if (checkLines(row, col)) {
-                // return false if any valid moves are found for the current player
-                return false;
-            }
-        }
+    // check if the current player can move
+    if (nextPlayerCanMove()) {
+        return false;
     }
 
+    // check if the player after that can move
     Othello* tmp = clone();
     tmp -> make_move("SKIP");
-    for (size_t row = 0; row < NUM_ROWS; ++row) {
-        for (size_t col = 0; col < NUM_COLS; ++col) {
-            if (tmp->checkLines(row, col)) {
-                // return false if any valid moves are found for the other player
-                return false;
-            }
-        }
+    if (tmp -> nextPlayerCanMove()) {
+        return false;
     }
 
     // if no valid moves were found for either player, return true
@@ -220,17 +224,7 @@ bool Othello::is_game_over() const {
 bool Othello::is_legal(const std::string& move) const {
     if (stringToUpper(move) == "SKIP") {
         // check if any moves are possible
-        for (size_t row = 0; row < NUM_ROWS; ++row) {
-            for (size_t col = 0; col < NUM_COLS; ++col) {
-                // if a move is possible, return false
-                if (checkLines(row, col)) {
-                    return false;
-                }
-            }
-        }
-
-        //if no other valid moves were found, return true
-        return true;
+        return !nextPlayerCanMove();
     }
     else {
         int row = toRow(move);
@@ -342,8 +336,8 @@ size_t Othello::checkLine(size_t row, size_t col, int rowChange, int colChange) 
 }
 
 bool Othello::checkLines(size_t row, size_t col) const {
-    for (int rowChange = -1; rowChange <= 1; rowChange++) {
-        for (int colChange = -1; colChange <= 1; colChange++) {
+    for (int rowChange = -1; rowChange <= 1; ++rowChange) {
+        for (int colChange = -1; colChange <= 1; ++colChange) {
             // if the current line is flippable, return true
             if (checkLine(row, col, rowChange, colChange) > 0) {
                 return true;
@@ -379,4 +373,15 @@ size_t Othello::countDiscs(main_savitch_14::game::who player) const {
     }
 
     return count;
+}
+
+bool Othello::nextPlayerCanMove() const {
+    std::queue<std::string> moves;
+    compute_moves(moves);
+    if (moves.front() == "SKIP") {
+        return false;
+    }
+    else {
+        return true;
+    }
 }
