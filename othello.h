@@ -27,6 +27,11 @@ class Othello:public main_savitch_14::game {
         static const size_t NUM_COLS = 8;  // the number of columns on the board
 
         /**
+         * @return who is winning the game
+         */
+        main_savitch_14::game::who winning() const;
+
+        /**
          * @brief Make a move for the current player.
          * 
          * @param move the string with the column and row to make a move on

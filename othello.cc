@@ -30,6 +30,20 @@ Othello::Othello() {
     board[top][left + 1].setDisc(main_savitch_14::game::HUMAN);
 }
 
+main_savitch_14::game::who Othello::winning() const {
+    int value = evaluate();
+
+    if (value > 0) {
+        return main_savitch_14::game::COMPUTER;
+    }
+    else if (value < 0) {
+        return main_savitch_14::game::HUMAN;
+    }
+    else {
+        return main_savitch_14::game::NEUTRAL;
+    }
+}
+
 void Othello::make_move(const std::string& move) {
     // place discs only if the move isn't a skip
     if (stringToUpper(move) != "SKIP") {
@@ -82,8 +96,8 @@ void Othello::compute_moves(std::queue<std::string>& moves) const {
 
 void Othello::display_status() const {
     // print score
-    std::cout << "WHITE: " << countDiscs(main_savitch_14::game::COMPUTER) << '\n';
-    std::cout << "BLACK: " << countDiscs(main_savitch_14::game::HUMAN) << '\n';
+    std::cout << "BLACK (P1): " << countDiscs(main_savitch_14::game::HUMAN) << '\n';
+    std::cout << "WHITE (P2): " << countDiscs(main_savitch_14::game::COMPUTER) << '\n';
 
     // print top border
     std::cout << BORDER_COLOR << LABEL_COLOR;
